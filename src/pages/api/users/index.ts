@@ -30,7 +30,7 @@ function groupByDepartment(users: User[]) {
       groupedData[department] = {
         male: 0,
         female: 0,
-        ageRange: "",  // You can group by age if needed
+        ageRange: "",
         hair: {
           Black: 0,
           Blond: 0,
