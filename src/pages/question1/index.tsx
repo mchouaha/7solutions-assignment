@@ -63,36 +63,74 @@ const Question1: React.FC = () => {
   };
 
   const handleItemClick = (item: CulinaryItem) => {
+    // Add item to the appropriate list
     if (item.type === "Fruit") {
       setFruitList((prev) => addToListIfAbsent(prev, item));
     } else if (item.type === "Vegetable") {
       setVegetableList((prev) => addToListIfAbsent(prev, item));
     }
 
+    // Remove item from main culinary list
     setCulinaryList((prev) => removeFromList(prev, item));
+
+    // Initialize timer at 5s
     setItemTimers((prev) => ({ ...prev, [item.name]: 5 }));
 
+    // Start countdown (purely visual)
     timerRefs.current[item.name] = setInterval(() => {
       setItemTimers((prev) => {
-        const time = prev[item.name];
-        if (time <= 1) {
-          clearItemTimers(item.name);
-          return prev;
-        }
-        return { ...prev, [item.name]: time - 1 };
+        const current = prev[item.name];
+        return current > 1
+          ? { ...prev, [item.name]: current - 1 }
+          : prev; // Don't clear or change anything here
       });
     }, 1000);
 
+    // Schedule final removal
     timeoutRefs.current[item.name] = setTimeout(() => {
       if (item.type === "Fruit") {
         setFruitList((prev) => removeFromList(prev, item));
       } else if (item.type === "Vegetable") {
         setVegetableList((prev) => removeFromList(prev, item));
       }
+
       setCulinaryList((prev) => [...prev, item]);
-      clearItemTimers(item.name);
+
+      clearItemTimers(item.name); // Full cleanup
     }, 5000);
   };
+
+  // const handleItemClick = (item: CulinaryItem) => {
+  //   if (item.type === "Fruit") {
+  //     setFruitList((prev) => addToListIfAbsent(prev, item));
+  //   } else if (item.type === "Vegetable") {
+  //     setVegetableList((prev) => addToListIfAbsent(prev, item));
+  //   }
+  //
+  //   setCulinaryList((prev) => removeFromList(prev, item));
+  //   setItemTimers((prev) => ({ ...prev, [item.name]: 5 }));
+  //
+  //   timerRefs.current[item.name] = setInterval(() => {
+  //     setItemTimers((prev) => {
+  //       const time = prev[item.name];
+  //       if (time <= 1) {
+  //         clearItemTimers(item.name);
+  //         return prev;
+  //       }
+  //       return { ...prev, [item.name]: time - 1 };
+  //     });
+  //   }, 1000);
+  //
+  //   timeoutRefs.current[item.name] = setTimeout(() => {
+  //     if (item.type === "Fruit") {
+  //       setFruitList((prev) => removeFromList(prev, item));
+  //     } else if (item.type === "Vegetable") {
+  //       setVegetableList((prev) => removeFromList(prev, item));
+  //     }
+  //     setCulinaryList((prev) => [...prev, item]);
+  //     clearItemTimers(item.name);
+  //   }, 5000);
+  // };
 
   const handleRemoveFromSubList = (item: CulinaryItem) => {
     if (item.type === "Fruit") {
